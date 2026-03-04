@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+env/
+
+# Secrets
+.env
+*.key
+
+# Data (chroma_db is rebuilt at runtime)
+**/chroma_db/
+
+# Outputs (regenerate with generate_demo_outputs.py)
+# Uncomment below if you don't want to commit outputs:
+# outputs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml

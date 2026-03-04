@@ -1,0 +1,86 @@
+[
+  {
+    "account_id": "4001",
+    "name": "Product Revenue - SaaS",
+    "type": "Revenue",
+    "normal": "credit"
+  },
+  {
+    "account_id": "4002",
+    "name": "Professional Services Revenue",
+    "type": "Revenue",
+    "normal": "credit"
+  },
+  {
+    "account_id": "4003",
+    "name": "Support & Maintenance Revenue",
+    "type": "Revenue",
+    "normal": "credit"
+  },
+  {
+    "account_id": "5001",
+    "name": "Cloud Infrastructure Costs",
+    "type": "COGS",
+    "normal": "debit"
+  },
+  {
+    "account_id": "5002",
+    "name": "Third-Party Software Licenses",
+    "type": "COGS",
+    "normal": "debit"
+  },
+  {
+    "account_id": "5003",
+    "name": "Professional Services COGS",
+    "type": "COGS",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6001",
+    "name": "Salaries & Benefits",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6002",
+    "name": "Sales Commissions",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6003",
+    "name": "Marketing & Advertising",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6004",
+    "name": "Travel & Entertainment",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6005",
+    "name": "Software & Tools",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6006",
+    "name": "Depreciation & Amortization",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6007",
+    "name": "Rent & Facilities",
+    "type": "OpEx",
+    "normal": "debit"
+  },
+  {
+    "account_id": "6008",
+    "name": "Legal & Professional Fees",
+    "type": "OpEx",
+    "normal": "debit"
+  }
+]

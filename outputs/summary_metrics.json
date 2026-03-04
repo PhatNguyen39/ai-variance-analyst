@@ -1,0 +1,13 @@
+{
+  "total_budget": 24174100.0,
+  "total_actual": 24032136.0,
+  "total_variance": -141964.0,
+  "total_variance_pct": -0.0059,
+  "revenue_budget": 14276000.0,
+  "revenue_actual": 13989629.0,
+  "revenue_variance_pct": -0.0201,
+  "expense_budget": 9898100.0,
+  "expense_actual": 10042507.0,
+  "expense_variance_pct": 0.0146,
+  "forecast_vs_budget": -0.0135
+}
