@@ -11,6 +11,8 @@ pinned: false
 
 # 📊 AI Variance Analyst — FP&A Copilot
 
+> **Live Demo:** https://huggingface.co/spaces/PhatNguyen39/ai-variance-analyst
+
 > **Automated budget vs. actual analysis powered by LLMs + RAG — no hallucination, full auditability.**
 
 A production-grade ML portfolio project demonstrating data engineering, statistical anomaly detection, Retrieval-Augmented Generation (RAG), and LLM-powered executive reporting for Finance & FP&A use cases.
