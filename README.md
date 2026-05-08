@@ -1,3 +1,15 @@
+---
+title: AI Variance Analyst
+emoji: 📊
+colorFrom: blue
+colorTo: indigo
+sdk: streamlit
+sdk_version: "1.32.0"
+python_version: "3.10"
+app_file: app.py
+pinned: false
+---
+
 # 📊 AI Variance Analyst — FP&A Copilot
 
 > **Live Demo:** https://huggingface.co/spaces/PhatNguyen39/ai-variance-analyst
