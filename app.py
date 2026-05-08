@@ -565,11 +565,18 @@ with tab4:
         name="Forecast", line=dict(color="#a78bfa", dash="dot", width=2),
         mode="lines",
     ))
-    fig_trend.add_vline(
-        x=current_period, line_dash="dash", line_color="#64748b", line_width=1.5,
-        annotation_text="← Actuals | Forecast →",
-        annotation_position="top",
-        annotation_font=dict(color="#64748b", size=11),
+    fig_trend.add_shape(
+        type="line",
+        x0=current_period, x1=current_period,
+        y0=0, y1=1, yref="paper",
+        line=dict(color="#64748b", width=1.5, dash="dash"),
+    )
+    fig_trend.add_annotation(
+        x=current_period, y=1.02, yref="paper",
+        text="← Actuals | Forecast →",
+        showarrow=False,
+        font=dict(color="#64748b", size=11),
+        xanchor="center",
     )
     fig_trend.update_layout(
         paper_bgcolor="#0d1424", plot_bgcolor="#0d1424",
