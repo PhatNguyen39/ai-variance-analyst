@@ -565,6 +565,12 @@ with tab4:
         name="Forecast", line=dict(color="#a78bfa", dash="dot", width=2),
         mode="lines",
     ))
+    fig_trend.add_vline(
+        x=current_period, line_dash="dash", line_color="#64748b", line_width=1.5,
+        annotation_text="← Actuals | Forecast →",
+        annotation_position="top",
+        annotation_font=dict(color="#64748b", size=11),
+    )
     fig_trend.update_layout(
         paper_bgcolor="#0d1424", plot_bgcolor="#0d1424",
         font=dict(color="#94a3b8"),
