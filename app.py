@@ -198,13 +198,17 @@ df_filtered = df[
     df["department_name"].isin(selected_depts)
 ].copy()
 
+# Closed months only (actuals exist) — used for dashboard charts
+df_closed = df_filtered.dropna(subset=["actual_amount"])
+current_period = df["period"][df["actual_amount"].notna()].max()
+
 
 # ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="app-header" style="padding:1.2rem 1.5rem;">
   <span class="app-title">📊 AI Variance Analyst</span>
   <span style="color:#475569;margin:0 1rem;">|</span>
-  <span class="app-subtitle">FP&A Copilot · NovaTech Solutions Inc. · FY2024</span>
+  <span class="app-subtitle">FP&A Copilot · NovaTech Solutions Inc. · FY2024 · YTD through {current_period}</span>
   <span style="float:right;"><span class="ai-badge">POWERED BY CLAUDE</span></span>
 </div>
 """, unsafe_allow_html=True)
@@ -304,9 +308,9 @@ with tab1:
     with col_right:
         st.subheader("📊 Variance Heatmap")
 
-        # Pivot for heatmap: account_type vs period (aggregated)
-        heat_data = df_filtered.groupby(["account_type", "period"]).agg(
-            variance_pct=("variance_amount", lambda x: x.sum() / df_filtered.loc[x.index, "budget_amount"].sum())
+        # Pivot for heatmap: account_type vs period (closed months only)
+        heat_data = df_closed.groupby(["account_type", "period"]).agg(
+            variance_pct=("variance_amount", lambda x: x.sum() / df_closed.loc[x.index, "budget_amount"].sum())
         ).reset_index()
 
         pivot = heat_data.pivot(index="account_type", columns="period", values="variance_pct")
@@ -353,7 +357,7 @@ with tab1:
 
     # ── Waterfall chart
     st.subheader("💧 Budget-to-Actual Waterfall (by Account Type)")
-    wf_data = df_filtered.groupby("account_type").agg(
+    wf_data = df_closed.groupby("account_type").agg(
         budget=("budget_amount","sum"),
         actual=("actual_amount","sum")
     ).reset_index()
@@ -531,16 +535,17 @@ with tab4:
     st.subheader("📈 Budget vs Actual Trends")
 
     # Select account to chart
+    acct_names = sorted(df["account_name"].unique())
     chart_account = st.selectbox(
         "Select Account",
-        sorted(df["account_name"].unique()),
-        index=0,
+        acct_names,
+        index=acct_names.index("Marketing & Advertising"),
         key="chart_acct"
     )
 
     acct_data = df[df["account_name"] == chart_account].groupby("period").agg(
         budget=("budget_amount","sum"),
-        actual=("actual_amount","sum"),
+        actual=("actual_amount", lambda x: x.sum(min_count=1)),  # NaN for open months
         forecast=("forecast_amount","sum"),
     ).reset_index()
 
@@ -594,7 +599,7 @@ with tab4:
 
     # Multi-account variance comparison
     st.subheader("📊 All Accounts — YTD Variance Summary")
-    ytd_summary = df.groupby(["account_name", "account_type"]).agg(
+    ytd_summary = df.dropna(subset=["actual_amount"]).groupby(["account_name", "account_type"]).agg(
         budget=("budget_amount","sum"),
         actual=("actual_amount","sum"),
     ).reset_index()

@@ -41,6 +41,7 @@ def load_data(path: str = "data/processed/erp_combined.csv") -> pd.DataFrame:
 
 def rule_based_flags(df: pd.DataFrame) -> pd.DataFrame:
     """Flag rows where |variance %| > threshold AND dollar amount is meaningful."""
+    df = df.dropna(subset=["actual_amount"])
     flagged = df[
         (df["abs_variance_pct"] >= RULE_THRESHOLD_PCT) &
         (df["variance_amount"].abs() >= MIN_AMOUNT_FLAG)
@@ -51,6 +52,7 @@ def rule_based_flags(df: pd.DataFrame) -> pd.DataFrame:
 
 def statistical_flags(df: pd.DataFrame) -> pd.DataFrame:
     """Z-score based outlier detection per account across all periods."""
+    df = df.dropna(subset=["actual_amount"])
     results = []
     for acct_id, group in df.groupby("account_id"):
         if len(group) < 4:
@@ -65,6 +67,7 @@ def statistical_flags(df: pd.DataFrame) -> pd.DataFrame:
 
 def trend_flags(df: pd.DataFrame) -> pd.DataFrame:
     """Flag accounts with 3+ consecutive periods of same-direction variance."""
+    df = df.dropna(subset=["actual_amount"])
     results = []
     df_sorted = df.sort_values(["account_id", "department_id", "period"])
     for (acct, dept), group in df_sorted.groupby(["account_id", "department_id"]):
@@ -124,6 +127,7 @@ def build_variance_report(df: pd.DataFrame) -> pd.DataFrame:
 
 def compute_summary_metrics(df: pd.DataFrame) -> dict:
     """High-level KPIs for executive dashboard."""
+    df = df.dropna(subset=["actual_amount"])
     total_budget  = df["budget_amount"].sum()
     total_actual  = df["actual_amount"].sum()
     total_forecast= df["forecast_amount"].sum()

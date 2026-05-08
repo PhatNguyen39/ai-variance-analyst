@@ -15,6 +15,7 @@ np.random.seed(42)
 COMPANY = "NovaTech Solutions Inc."
 FISCAL_YEAR = 2024
 PERIODS = [f"2024-{str(m).zfill(2)}" for m in range(1, 13)]
+CURRENT_PERIOD = "2024-10"  # Analysis cutoff: Oct 2024 closed, Nov–Dec open
 
 DEPARTMENTS = {
     "D01": "Engineering",
@@ -116,6 +117,7 @@ def generate_budget():
 def generate_actuals(budget_df):
     """Generate actuals with planted variances for demo realism."""
     rows = []
+    closed_df = budget_df[budget_df["period"] <= CURRENT_PERIOD]
 
     # Planted anomalies: (account_id, dept_id, period_index, variance_pct)
     anomalies = {
@@ -139,7 +141,7 @@ def generate_actuals(budget_df):
         ("4002", "D02", 10): +0.19,   # Nov   +19%
     }
 
-    for _, row in budget_df.iterrows():
+    for _, row in closed_df.iterrows():
         period_idx = PERIODS.index(row["period"])
         key = (row["account_id"], row["department_id"], period_idx)
         planted_var = anomalies.get(key, 0)
@@ -164,17 +166,15 @@ def generate_actuals(budget_df):
 def generate_forecast(budget_df, actuals_df):
     """Rolling forecast: use actuals YTD + updated forward estimates."""
     rows = []
-    # Merge
     merged = budget_df.merge(actuals_df, on=["period","account_id","account_name",
-                                               "account_type","department_id","department_name"])
+                                               "account_type","department_id","department_name"],
+                             how="left")
     for _, row in merged.iterrows():
-        period_idx = PERIODS.index(row["period"])
-        # Months 1-8: use actuals as base; months 9-12: budget with small revision
-        if period_idx < 8:
+        # Closed months: anchor forecast to actuals; open months: revised budget estimate
+        if row["period"] <= CURRENT_PERIOD and pd.notna(row.get("actual_amount")):
             forecast = row["actual_amount"] * (1 + np.random.normal(0, 0.01))
         else:
-            # Adjust forecast for known issues (revenue headwind)
-            adj = -0.05 if row["account_id"] in ["4001"] else np.random.normal(0, 0.02)
+            adj = -0.05 if row["account_id"] == "4001" else np.random.normal(0, 0.02)
             forecast = row["budget_amount"] * (1 + adj)
         rows.append({
             "period": row["period"],
@@ -204,9 +204,10 @@ def main():
     forecast = generate_forecast(budget, actuals)
     forecast.to_csv("data/raw/forecast.csv", index=False)
 
-    # Combined dataset
+    # Combined dataset: left-join so Nov–Dec retain budget/forecast rows with NaN actuals
     combined = budget.merge(actuals, on=["period","account_id","account_name",
-                                          "account_type","department_id","department_name"])
+                                          "account_type","department_id","department_name"],
+                            how="left")
     combined = combined.merge(forecast, on=["period","account_id","account_name",
                                              "account_type","department_id","department_name"])
     combined.to_csv("data/processed/erp_combined.csv", index=False)
@@ -216,7 +217,7 @@ def main():
     with open("data/raw/gl_metadata.json", "w") as f:
         json.dump(gl_meta, f, indent=2)
 
-    print(f"✅ Data generated: {len(budget)} budget rows, {len(actuals)} actual rows")
+    print(f"✅ Data generated: {len(budget)} budget rows, {len(actuals)} actual rows (through {CURRENT_PERIOD})")
     print(f"   Periods: {PERIODS[0]} → {PERIODS[-1]}")
     print(f"   Accounts: {len(GL_ACCOUNTS)} | Departments: {len(DEPARTMENTS)}")
 
