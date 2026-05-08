@@ -19,10 +19,9 @@ from plotly.subplots import make_subplots
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
-# Auto-generate data if missing (for HuggingFace Spaces / fresh deploys)
-if not os.path.exists("data/processed/erp_combined.csv"):
-    import subprocess
-    subprocess.run([sys.executable, "src/generate_data.py"], check=True)
+# Always regenerate data to ensure CURRENT_PERIOD is applied correctly
+import subprocess
+subprocess.run([sys.executable, "src/generate_data.py"], check=True)
 
 from variance_engine import (
     load_data, build_variance_report, compute_summary_metrics, get_top_variances
@@ -559,6 +558,7 @@ with tab4:
         x=acct_data["period"], y=acct_data["actual"],
         name="Actual", line=dict(color="#f97316", width=3),
         mode="lines+markers", marker=dict(size=8),
+        connectgaps=False,
     ))
     fig_trend.add_trace(go.Scatter(
         x=acct_data["period"], y=acct_data["forecast"],
