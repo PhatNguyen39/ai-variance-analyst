@@ -548,6 +548,9 @@ with tab4:
         forecast=("forecast_amount","sum"),
     ).reset_index()
 
+    # Show forecast only for open months — actual is ground truth for closed months
+    forecast_open = acct_data["forecast"].where(acct_data["actual"].isna())
+
     fig_trend = go.Figure()
     fig_trend.add_trace(go.Scatter(
         x=acct_data["period"], y=acct_data["budget"],
@@ -561,9 +564,10 @@ with tab4:
         connectgaps=False,
     ))
     fig_trend.add_trace(go.Scatter(
-        x=acct_data["period"], y=acct_data["forecast"],
+        x=acct_data["period"], y=forecast_open,
         name="Forecast", line=dict(color="#a78bfa", dash="dot", width=2),
-        mode="lines",
+        mode="lines+markers", marker=dict(size=8),
+        connectgaps=False,
     ))
     fig_trend.add_shape(
         type="line",
